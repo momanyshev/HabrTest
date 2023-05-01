@@ -55,8 +55,8 @@ public class MainPageTest {
         WebElement docsLink = driver.findElement(By.cssSelector("a[href='/ru/docs/docs/transparency/']"));
         docsLink.click();
 
-        WebElement rolesRules = driver.findElement(By.xpath("//a[contains(text(),'Правила оказания рекламных услуг')]"));
-        rolesRules.click();
+        WebElement rulesRules = driver.findElement(By.xpath("//a[contains(text(),'Правила оказания рекламных услуг')]"));
+        rulesRules.click();
 
         List<WebElement> companyWebsite = (driver.findElements(By.xpath("//h2[text()='Правила оказания рекламных услуг']")));
         assertFalse(companyWebsite.isEmpty(), "Ссылка на Правила оказания рекламных услуг недействительна");
