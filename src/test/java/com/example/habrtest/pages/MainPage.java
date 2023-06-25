@@ -1,12 +1,17 @@
 package com.example.habrtest.pages;
 
 import com.example.habrtest.AllureLogger;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 
 //page_url = https://habr.com/
@@ -22,11 +27,11 @@ public class MainPage {
     @FindBy(xpath = "//button[@class='tm-header__dropdown-toggle']")
     private WebElement headerDropdownToggle;
 
-    @FindBy(xpath = "//a[contains(@class,'author-btn')]")
-    private WebElement headerAuthorButton;
-
     @FindBy(xpath = "//a[@class='tm-our-projects__item']")
     private List <WebElement> dropdownToggleElement;
+
+    @FindBy(xpath = "//a[contains(@class,'author-btn')]")
+    private WebElement headerAuthorButton;
 
     @FindBy(xpath = "//a[contains(@class,'tm-main-menu__item')]")
     private List <WebElement> mainMenuItem;
@@ -46,23 +51,14 @@ public class MainPage {
     @FindBy(xpath = "//button[contains(@class,'menu-link_grey')]")
     private WebElement menuLinkGrey;
 
-    @FindBy(xpath = "//span//a[@href='/ru/flows/all/']")
-    private WebElement flowsAll;
+    @FindBy(xpath = "//div[@class='tm-page-settings-form__title']")
+    private WebElement menuLinkGreyHeader;
 
-    @FindBy(xpath = "//span//a[@href='/ru/posts/']")
-    private WebElement flowsPosts;
-
-    @FindBy(xpath = "//span//a[@href='/ru/news/']")
-    private WebElement flowsNews;
-
-    @FindBy(xpath = "//span//a[@href='/ru/hubs/']")
-    private WebElement flowsHubs;
-
-    @FindBy(xpath = "//span//a[@href='/ru/users/']")
-    private WebElement flowsAuthors;
-
-    @FindBy(xpath = "//span//a[@href='/ru/companies/']")
-    private WebElement flowsCompanies;
+    public void nextTab(){
+        ArrayList<String> tabs = new ArrayList<> (driver.getWindowHandles());
+        driver.switchTo().window(tabs.get(1));
+        LOG.info("Переход на новую вкладку");
+    }
 
     public String mainPageClick(){
         headerLogo.click();
@@ -75,9 +71,110 @@ public class MainPage {
         LOG.info("Раскрытие выпадающего списка направлений");
     }
 
-    public void headerAuthorButtonClick(){
-        headerAuthorButton.click();
-        LOG.info("Нажатие на кнопку 'КАК СТАТЬ АВТОРОМ'");
+    public boolean headerAuthorButtonClick(){
+        LOG.info("Проверка кликабельности кнопки 'КАК СТАТЬ АВТОРОМ'");
+        return headerAuthorButton.isEnabled();
+    }
+
+    public String dropdownToggleElementClick(int id){
+        headerDropdownToggleClick();
+        dropdownToggleElement.get(id).click();
+        LOG.info("Переход по " + id + " элементу выпадающего списка");
+        nextTab();
+        return driver.getCurrentUrl();
+    }
+
+    public String mainMenuAllStreamsClick(int id){
+        mainMenuItem.get(id).click();
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[contains(@href,'/all/') and contains(@class,'item_active')]")));
+        LOG.info("Выбор "+ id + " элемента главного меню");
+        return mainMenuItem.get(id).getAttribute("class");
+    }
+
+    public String mainMenuDevelopClick(int id){
+        mainMenuItem.get(id).click();
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[contains(@href,'/develop/') and contains(@class,'item_active')]")));
+        LOG.info("Выбор "+ id + " элемента главного меню");
+        return mainMenuItem.get(id).getAttribute("class");
+    }
+
+    public String mainMenuAdminClick(int id){
+        mainMenuItem.get(id).click();
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[contains(@href,'/admin/') and contains(@class,'item_active')]")));
+        LOG.info("Выбор "+ id + " элемента главного меню");
+        return mainMenuItem.get(id).getAttribute("class");
+    }
+
+    public String mainMenuDesignClick(int id){
+        mainMenuItem.get(id).click();
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[contains(@href,'/design/') and contains(@class,'item_active')]")));
+        LOG.info("Выбор "+ id + " элемента главного меню");
+        return mainMenuItem.get(id).getAttribute("class");
+    }
+
+    public String mainMenuManagementClick(int id){
+        mainMenuItem.get(id).click();
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[contains(@href,'/management/') and contains(@class,'item_active')]")));
+        LOG.info("Выбор "+ id + " элемента главного меню");
+        return mainMenuItem.get(id).getAttribute("class");
+    }
+
+    public String mainMenuMarketingClick(int id){
+        mainMenuItem.get(id).click();
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[contains(@href,'/marketing/') and contains(@class,'item_active')]")));
+        LOG.info("Выбор "+ id + " элемента главного меню");
+        return mainMenuItem.get(id).getAttribute("class");
+    }
+
+    public String mainMenuPopsciClick(int id){
+        mainMenuItem.get(id).click();
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[contains(@href,'/popsci/') and contains(@class,'item_active')]")));
+        LOG.info("Выбор "+ id + " элемента главного меню");
+        return mainMenuItem.get(id).getAttribute("class");
+    }
+
+    public String headerMenuSearchClick(){
+        headerMenuSearch.click();
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//input[@placeholder='Поиск']")));
+        LOG.info("Нажатие на значок поиска");
+        return driver.getCurrentUrl();
+    }
+
+    public boolean headerMenuProfileIsClickable(){
+        LOG.info("Проверка кликабельности кнопки Профиль");
+        return headerMenuProfile.isEnabled();
+    }
+
+    public void headerMenuProfileClick(){
+        LOG.info("Нажатие на кнопку Профиль");
+        headerMenuProfile.click();
+    }
+
+    public boolean menuAuthButtonsClick(int id){
+        headerMenuProfileClick();
+        LOG.info("Проверка кликабельности кнопки меню авторизации");
+        return menuAuthButtons.get(id).isEnabled();
+    }
+
+    public String menuTopLinksAuthorLink(int id){
+        headerMenuProfileClick();
+        LOG.info("Проверка отображения на странице пользовательских ссылок");
+        return menuTopLinks.get(id).getAttribute("href");
+    }
+
+    public String menuLinkGreyClick(){
+        headerMenuProfileClick();
+        menuLinkGrey.click();
+        LOG.info("Нажатие на ссылку Язык, лента");
+        return menuLinkGreyHeader.getText();
     }
 
     public MainPage(WebDriver driver){
