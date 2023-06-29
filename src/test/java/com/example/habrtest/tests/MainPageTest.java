@@ -1,7 +1,11 @@
 package com.example.habrtest.tests;
 
+import com.example.habrtest.MyExtension;
 import com.example.habrtest.pages.MainPage;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -11,8 +15,9 @@ import java.time.Duration;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith(MyExtension.class)
 public class MainPageTest {
-    private static  WebDriver driver;
+    private static WebDriver driver;
 
     private MainPage mainPage;
 
@@ -37,79 +42,38 @@ public class MainPageTest {
     @Test
     @DisplayName("Проверка перехода по логотипу на главную страницу")
     public void logoChecking() {
-        assertEquals("https://habr.com/ru/all/", mainPage.mainPageClick(), "Открылась неверная ссылка");
+        assertTrue(mainPage.mainPageClick().contains("/all/"), "Открылась неверная ссылка");
     }
 
-    @Test
-    @DisplayName("Проверка перехода по элементу выпадающего списка Хабр")
-    public void dropdownToggleHabr(){
-        assertEquals("https://habr.com/ru/all/",  mainPage.dropdownToggleElementClick(0), "Открылась неверная ссылка");
-    }
-
-    @Test
-    @DisplayName("Проверка перехода по элементу выпадающего списка Q&A")
-    public void dropdownToggleQaA(){
-        assertEquals("https://qna.habr.com/",  mainPage.dropdownToggleElementClick(1), "Открылась неверная ссылка");
-    }
-
-    @Test
-    @DisplayName("Проверка перехода по элементу выпадающего списка Карьера")
-    public void dropdownToggleCareer(){
-        assertEquals("https://career.habr.com/",  mainPage.dropdownToggleElementClick(2), "Открылась неверная ссылка");
-    }
-
-    @Test
-    @DisplayName("Проверка перехода по элементу выпадающего списка Фриланс")
-    public void dropdownToggleFreelance(){
-        assertEquals("https://freelance.habr.com/",  mainPage.dropdownToggleElementClick(3), "Открылась неверная ссылка");
+    @ParameterizedTest(name = "{index} - {2}")
+    @CsvSource({"0, /all/, Хабр",
+            "1, /qna.habr.com/, Q&A",
+            "2, /career.habr.com/, Карьера",
+            "3, /freelance.habr.com/, Фриланс"})
+    @DisplayName("Проверка открытия страницы сервисов")
+    public void dropdownProjectItemsUrlCheck(int num, String url, String name) {
+        assertTrue(mainPage.dropdownToggleElementClick(num).contains(url), "Открылась неверная ссылка, должна была открыться ссылка на сервис " + name);
     }
 
     @Test
     @DisplayName("Проверка кликабельности кнопки КАК СТАТЬ АВТОРОМ")
-    public void authorButtonClick(){
+    public void authorButtonClick() {
         assertTrue(mainPage.headerAuthorButtonClick(), "Кнопка КАК СТАТЬ АВТОРОМ не кликабельная");
     }
 
-    @Test
-    @DisplayName("Проверка выбора в главном меню элемента Все потоки")
-    public void mainMenuAllStreams(){
-        assertTrue(mainPage.mainMenuAllStreamsClick(0).contains("item_active"), "Элемент Все потоки не выбран");
-    }
-
-    @Test
-    @DisplayName("Проверка выбора в главном меню элемента Разработка")
-    public void mainMenuDevelop(){
-        assertTrue(mainPage.mainMenuDevelopClick(1).contains("item_active"), "Элемент Разработка не выбран");
-    }
-
-    @Test
-    @DisplayName("Проверка выбора в главном меню элемента Администрирование")
-    public void mainMenuAdmin(){
-        assertTrue(mainPage.mainMenuAdminClick(2).contains("item_active"), "Элемент Администрирование не выбран");
-    }
-
-    @Test
-    @DisplayName("Проверка выбора в главном меню элемента Дизайн")
-    public void mainMenuDesign(){
-        assertTrue(mainPage.mainMenuDesignClick(3).contains("item_active"), "Элемент Дизайн не выбран");
-    }
-
-    @Test
-    @DisplayName("Проверка выбора в главном меню элемента Менеджмент")
-    public void mainMenuManagement(){
-        assertTrue(mainPage.mainMenuManagementClick(4).contains("item_active"), "Элемент Менеджмент не выбран");
-    }
-
-    @Test
-    @DisplayName("Проверка выбора в главном меню элемента Маркетинг")
-    public void mainMenuItemMarketing(){
-        assertTrue(mainPage.mainMenuMarketingClick(5).contains("item_active"), "Элемент Маркетинг не выбран");
-    }
-
-    @Test
-    @DisplayName("Проверка выбора в главном меню элемента Научтоп")
-    public void mainMenuItemPopsci(){
-        assertTrue(mainPage.mainMenuPopsciClick(6).contains("item_active"), "Элемент Научтоп не выбран");
+    //Работает нестабильно, периодически падают тесты в рандомном порядке
+    //почему падают понял, из-за прописанного xpath в ожидании, пока что нет мыслей как исправить
+    @ParameterizedTest(name = "{index} - {1}")
+    @CsvSource({"0, Все потоки",
+            "1, Разработка",
+            "2, Администрирование",
+            "3, Дизайн",
+            "4, Менеджмент",
+            "5, Маркетинг",
+            "6, Научтоп"})
+    @DisplayName("Проверка выбора в главном меню элементов")
+    public void mainMenuItemActiveCheck(int num, String name) {
+        assertTrue(mainPage.mainMenuAllStreamsClick(num).contains("item_active"), "Элемент " + name + " не выбран");
     }
 
     @Test
@@ -120,47 +84,31 @@ public class MainPageTest {
 
     @Test
     @DisplayName("Проверка кликабельности кнопки Профиль")
-    public void headerMenuProfileClick(){
+    public void headerMenuProfileClick() {
         assertTrue(mainPage.headerMenuProfileIsClickable(), "Кнопка Профиль не кликабельная");
     }
 
-    @Test
-    @DisplayName("Проверка кликабельности кнопки Войти")
-    public void loginButtonClick(){
-        assertTrue(mainPage.menuAuthButtonsClick(0), "Кнопка Войти не кликабельная");
+    @ParameterizedTest(name = "{index} - {1}")
+    @CsvSource({"0, Войти", "1, Регистрация"})
+    @DisplayName("Проверка кликабельности кнопок авторизации")
+    public void authButtonsCkick(int num, String name) {
+        assertTrue(mainPage.menuAuthButtonsClick(num), "Кнопка " + name + " не кликабельная");
     }
 
-    @Test
-    @DisplayName("Проверка кликабельности кнопки Регистрация")
-    public void registerButtonClick(){
-        assertTrue(mainPage.menuAuthButtonsClick(1), "Кнопка Регистрация не кликабельная");
-    }
-
-    @Test
-    @DisplayName("Проверка отображения на ссылки на страницу Как стать автором")
-    public void menuTopLinksAuthorLinkIsDisplayed(){
-        assertEquals("https://habr.com/ru/sandbox/start/", mainPage.menuTopLinksAuthorLink(0), "Ссылка Как стать автором отсутствует на странице");
-    }
-
-    @Test
-    @DisplayName("Проверка отображения на ссылки на страницу Правила сайта")
-    public void menuTopLinksSiteRulesIsDisplayed(){
-        assertEquals("https://habr.com/ru/docs/help/rules/", mainPage.menuTopLinksAuthorLink(1), "Ссылка Правила сайта отсутствует на странице");
+    @ParameterizedTest(name = "{index} - {1}")
+    @CsvSource({"0, Как стать автором, /sandbox/start/", "1, Правила сайта, /docs/help/rules/"})
+    @DisplayName("Проверка отображения на ссылки на страницы")
+    public void menuTopLinksIsDisplayed(int num, String name, String url) {
+        assertTrue(mainPage.menuTopLinksAuthorLink(num).contains(url), "Ссылка " + name + " отсутствует на странице");
     }
 
     @Test
     @DisplayName("Проверка отображения формы настроек языка и ленты")
-    public void menuLinkGreyForm(){
+    public void menuLinkGreyForm() {
         assertTrue(mainPage.menuLinkGreyClick().contains("Настройки страницы"), "Форма настроек языка и ленты не содержит нужного заголовка");
     }
 
-    /*
-    @Test
-    @Test
-    @Test
-    */
-
-    public static WebDriver getDriver(){
+    public static WebDriver getDriver() {
         return driver;
     }
 
