@@ -84,10 +84,10 @@ public class MainPage {
         return driver.getCurrentUrl();
     }
 
-    public String mainMenuAllStreamsClick(int id) {
+    public String mainMenuAllStreamsClick(int id, String name) {
         mainMenuItem.get(id).click();
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[contains(@href,'/all/') and contains(@class,'item_active')]")));
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//h1[contains(text(),'" + name + "')]")));
         LOG.info("Выбор " + id + " элемента главного меню");
         return mainMenuItem.get(id).getAttribute("class");
     }

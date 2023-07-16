@@ -18,19 +18,29 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class MainPageTest {
     private static WebDriver driver;
 
-    private MainPage mainPage;
+    private MainPage mainPage = new MainPage(getDriver());
 
-    @BeforeEach
-    public void setUp() {
+    public static WebDriver getDriver() {
+        if (driver == null)
+            createDriver();
+        if (driver.toString().contains("null"))
+            createDriver();
+        return driver;
+    }
+
+    public static void createDriver() {
         ChromeOptions options = new ChromeOptions();
         // Fix the issue https://github.com/SeleniumHQ/selenium/issues/11750
         options.addArguments("--remote-allow-origins=*");
         driver = new ChromeDriver(options);
+    }
+
+    @BeforeEach
+    public void setUp() {
+        getDriver();
         driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         driver.get("https://www.habr.com/");
-        mainPage = new MainPage(getDriver());
-
     }
 
     @AfterEach
@@ -60,8 +70,6 @@ public class MainPageTest {
         assertTrue(mainPage.headerAuthorButtonClick(), "Кнопка КАК СТАТЬ АВТОРОМ не кликабельная");
     }
 
-    //Работает нестабильно, периодически падают тесты в рандомном порядке
-    //почему падают понял, из-за прописанного xpath в ожидании, пока что нет мыслей как исправить
     @ParameterizedTest(name = "{index} - {1}")
     @CsvSource({"0, Все потоки",
             "1, Разработка",
@@ -69,10 +77,10 @@ public class MainPageTest {
             "3, Дизайн",
             "4, Менеджмент",
             "5, Маркетинг",
-            "6, Научтоп"})
+            "6, Научпоп"})
     @DisplayName("Проверка выбора в главном меню элементов")
     public void mainMenuItemActiveCheck(int num, String name) {
-        assertTrue(mainPage.mainMenuAllStreamsClick(num).contains("item_active"), "Элемент " + name + " не выбран");
+        assertTrue(mainPage.mainMenuAllStreamsClick(num, name).contains("item_active"), "Элемент " + name + " не выбран");
     }
 
     @Test
@@ -106,9 +114,4 @@ public class MainPageTest {
     public void menuLinkGreyForm() {
         assertTrue(mainPage.menuLinkGreyClick().contains("Настройки страницы"), "Форма настроек языка и ленты не содержит нужного заголовка");
     }
-
-    public static WebDriver getDriver() {
-        return driver;
-    }
-
 }
