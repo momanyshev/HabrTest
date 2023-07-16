@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class MainPageTest {
     private static WebDriver driver;
 
-    private MainPage mainPage = new MainPage(getDriver());
+    private final MainPage mainPage = new MainPage(getDriver());
 
     public static WebDriver getDriver() {
         if (driver == null)
